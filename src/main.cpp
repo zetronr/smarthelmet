@@ -16,7 +16,8 @@
 #define SCL_PIN         9
 #define VIBRATOR_PIN    13
 #define OVERRIDE_BTN    12
-#define ENDPOINT_URL    "http://192.168.18.20:9090/crashalert" //server testing gw 
+#define crashurl    "http://192.168.18.20:9090/crashalert" //server testing gw 
+#define sleepurl "http://192.168.18.20:9090/sleepalert" 
 
 TinyGPSPlus gps;
 HardwareSerial gpsSerial(1);
@@ -45,7 +46,7 @@ float ax, ay, az;
 int sosCount = 0;
 
 
-void sendMessage(String payload);
+void sendMessage(String payload, String url);
 
 
 void Heartbeat(void *pvParameters) {
@@ -93,7 +94,7 @@ void Wakeup(void *pvParameters) {
     String payload = "{\"bpm\": " + String(beatsPerMinute) +
                      ", \"message\": \"Microsleep detected\"}";
     Serial.println(payload);
-    sendMessage(payload);
+    sendMessage(payload,sleepurl);
 
     digitalWrite(VIBRATOR_PIN, LOW);
   }
@@ -174,7 +175,7 @@ void crashAlertSend(void *pvParameters) {
     }
 
     Serial.println(payload);
-    sendMessage(payload);
+    sendMessage(payload,crashurl);
   }
 }
 
@@ -238,10 +239,10 @@ void loop() {
 }
 
 
-void sendMessage(String payload) {
+void sendMessage(String payload, String url) {
   if (WiFi.status() == WL_CONNECTED) {
     HTTPClient http;
-    http.begin(ENDPOINT_URL);
+    http.begin(url);
     http.addHeader("Content-Type", "application/json");
 
     int httpResponseCode = http.POST(payload);
