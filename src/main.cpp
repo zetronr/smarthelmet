@@ -16,7 +16,7 @@
 #define SCL_PIN         9
 #define VIBRATOR_PIN    13
 #define OVERRIDE_BTN    12
-#define ENDPOINT_URL    "http://192.168.18.20:9090/crashalert"
+#define ENDPOINT_URL    "http://192.168.18.20:9090/crashalert" //server testing gw 
 
 TinyGPSPlus gps;
 HardwareSerial gpsSerial(1);
@@ -70,9 +70,9 @@ void Heartbeat(void *pvParameters) {
   }
 }
 
-void microsleepMonitor(void *pvParameters) {
+void microsleepMonitor(void *pvParameters) { // algoritma microsleep taro disini, tapi kalau mau ambil matriks dari gyro, langsung ambil dari global variable
   while (1) {
-    if (beatsPerMinute < 40) {
+    if (beatsPerMinute < 40) {  //ini contoh aja
       xTaskNotifyGive(wakeuptaskhandle);
     } else {
       digitalWrite(VIBRATOR_PIN, LOW);
@@ -99,7 +99,7 @@ void Wakeup(void *pvParameters) {
   }
 }
 
-void getGforce(void *pvParameters) {
+void getGforce(void *pvParameters) {// taro perhitungan buat crash disini
   while (1) {
     int16_t ax_raw, ay_raw, az_raw;
     mpu.getAcceleration(&ax_raw, &ay_raw, &az_raw);
@@ -156,7 +156,7 @@ void crashAlertSend(void *pvParameters) {
 
     String payload;
 
-    if (gps.location.isUpdated()) {
+    if (gps.location.isUpdated()) {//belom di coba gps nya...
       float lat = gps.location.lat();
       float lng = gps.location.lng();
 
